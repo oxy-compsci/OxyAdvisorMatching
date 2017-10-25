@@ -1,7 +1,7 @@
 import java.util.*;
 
 public class HillClimbing {
-    public static final int MAX_ITERATIONS = 300;
+    public static final int MAX_ITERATIONS = 500;
 
     public Map<Student, Professor> findBestMatches(List<Student> students, List<Professor> professors) {
         int generation = 0;
@@ -15,10 +15,13 @@ public class HillClimbing {
                 nextMap =  (HashMap<Student,Professor>)((HashMap<Student,Professor>)currentMap).clone();
                 Random random= new Random();
                 List<Student>keys = new ArrayList<Student>(currentMap.keySet());
+
                 Student randomKey1 = keys.get(random.nextInt(keys.size()));
                 Student randomKey2 = keys.get(random.nextInt(keys.size()));
+                Professor temp1 = currentMap.get(randomKey1);
                 nextMap.put(randomKey1, currentMap.get(randomKey2));
-                nextMap.put(randomKey2, currentMap.get(randomKey1));
+                nextMap.put(randomKey2, temp1);
+
                 nextScore = score(nextMap);
                 if (bestNextMap == null || nextScore > bestScore) {
                     bestNextMap = nextMap;
