@@ -1,7 +1,6 @@
 
 import com.opencsv.CSVReaderBuilder;
 import com.opencsv.CSVReader;
-import com.sun.scenario.effect.impl.prism.PrFilterContext;
 
 import java.io.FileReader;
 import java.io.IOException;
@@ -9,20 +8,16 @@ import java.util.*;
 
 public class Main {
     public static void main(String[] args) {
-        List<Professor> profsList = getProfessors("/Users/stephanieangulo/Desktop/cs-stuff/fall-2017/advisorMatch/professors.csv");
-        List<Student> studentList = getStudents("/Users/stephanieangulo/Desktop/cs-stuff/fall-2017/advisorMatch/students.csv");
-
-//        for(int i = 0; i < studentList.size(); i++)
-//            System.out.println(studentList.get(i).majors);
-//        System.out.println("-----------------");
-//        for(int i = 0; i < profsList.size(); i++)
-//            System.out.println(profsList.get(i).department);
-
-//        List<Student> studentList = getStudents("/Users/stephanieangulo/Desktop/cs-stuff/fall-2017/advisorMatch/teststudent.csv");
-//        List<Professor> profsList = getProfessors("/Users/stephanieangulo/Desktop/cs-stuff/fall-2017/advisorMatch/testprofessor.csv");
-        hillClimbing(profsList, studentList);
+        List<Professor> professors = getProfessors("/Users/stephanieangulo/Desktop/cs-stuff/fall-2017/advisorMatch/professors.csv");
+        List<Student> students = getStudents("/Users/stephanieangulo/Desktop/cs-stuff/fall-2017/advisorMatch/students.csv");
+        HillClimbing experiment = new HillClimbing();
+        Map<Student, Professor> bestMap = experiment.findBestMatches(students, professors);
+//        for (Map.Entry<Student, Professor> entry : bestMap.entrySet()) {
+//            System.out.println( entry.getKey().last +",  " + entry.getKey().majors + " : " +
+//                    entry.getValue().last + ", " + entry.getValue().department);
+//        }
     }
-    public static List getProfessors(String fileName) {
+    private static List getProfessors(String fileName) {
         try {
             CSVReader reader = new CSVReaderBuilder(new FileReader(fileName)).withSkipLines(1).build();
             List<Professor> profsList = new ArrayList<Professor>();
@@ -46,7 +41,7 @@ public class Main {
         }
         return null;
     }
-    public static List getStudents(String fileName) {
+    private static List getStudents(String fileName) {
         try {
             CSVReader reader = new CSVReaderBuilder(new FileReader(fileName)).withSkipLines(1).build();
             List<Student> studentList = new ArrayList<Student>();
@@ -71,48 +66,6 @@ public class Main {
             e.printStackTrace();
         }
         return null;
-    }
-
-
-    public static void hillClimbing(List<Professor> professors, List<Student> students) {
-        int generation = 0;
-        Map<Student, Professor> studentProfMatches = new HashMap<Student, Professor>();
-        Professor nextProf;
-
-        while(generation < 100) {
-            for(int i = 0; i < students.size(); i++) {
-                int maxMatch = 0;
-                Professor bestProf;
-
-
-
-
-//                Student unmatchedStudent = new Student();
-//                for(int j = 0; j < professors.size(); j++) {
-//                    int currentMatch = getScore(professors.get(j), students.get(i));
-//                    if(currentMatch > maxMatch) {
-//                        maxMatch = currentMatch;
-//                        bestProf = professors.get(j);
-//                    }
-//                }
-//                if(bestProf == null) {
-//                    if(studentProfMatches.containsValue())
-//                }
-                //studentProfMatches.put(students.get(i), bestProf);
-            }
-            generation++;
-        }
-        int count = 0;
-
-//        for (Map.Entry<Student, Professor> entry : studentProfMatches.entrySet()) {
-//            if(entry.getValue().first == null) {
-//                count++;
-//            }
-//            System.out.println( entry.getKey().last +",  " + entry.getKey().majors + " : " +
-//                    entry.getValue().last + ", " + entry.getValue().department);
-//        }
-//        System.out.println("Number of entries null: " + count);
-
     }
 
 

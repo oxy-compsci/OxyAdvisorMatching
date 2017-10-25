@@ -1,6 +1,7 @@
 public class Match {
     Student student;
     Professor professor;
+
     public Match(Student student, Professor professor) {
         this.student = student;
         this.professor = professor;
