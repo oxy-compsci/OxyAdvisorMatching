@@ -1,4 +1,5 @@
 public class Professor {
+
     String id, last, first, department;
     int count;
 

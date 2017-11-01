@@ -1,11 +1,8 @@
-
 import com.opencsv.CSVReaderBuilder;
 import com.opencsv.CSVReader;
 
-import java.io.PrintWriter;
 import java.io.FileReader;
 import java.io.FileWriter;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 
 import java.util.*;
@@ -22,10 +19,9 @@ public class Main {
         HillClimbing experiment = new HillClimbing();
         Map<Student, Professor> bestMap = experiment.findBestMatches(students, professors);
 
-        FileWriter writer = null;
         try {
-            writer = new FileWriter("answer.csv");
-            writer.append(FILE_HEADER.toString());
+            FileWriter writer = new FileWriter("answer.csv");
+            writer.append(FILE_HEADER);
             writer.append(NEW_LINE_SEPARATOR);
             writer.append(getCSVFile(bestMap));
         } catch (IOException e) {
@@ -33,12 +29,13 @@ public class Main {
         }
 
     }
+
     private static String getCSVFile(Map<Student, Professor> map) {
         String data = "";
-        List<Student>students = new ArrayList<Student>(map.keySet());
+        List<Student> students = new ArrayList<Student>(map.keySet());
         Iterator<Student> iterator = students.iterator();
 
-        while(iterator.hasNext()) {
+        while (iterator.hasNext()) {
             Student student = iterator.next();
             Professor professor = map.get(student);
             data = data + student.id + COMMA_DELIMITER;
@@ -53,14 +50,15 @@ public class Main {
         }
         return data;
     }
-    private static List getProfessors(String fileName) {
+
+    private static List<Professor> getProfessors(String fileName) {
         try {
             CSVReader reader = new CSVReaderBuilder(new FileReader(fileName)).withSkipLines(1).build();
             List<Professor> profsList = new ArrayList<Professor>();
             List<String[]> infoList = reader.readAll();
             Iterator<String[]> iterator = infoList.iterator();
 
-            while(iterator.hasNext()) {
+            while (iterator.hasNext()) {
                 String[] info = iterator.next();
                 Professor prof = new Professor();
                 prof.id = info[0];
@@ -70,21 +68,21 @@ public class Main {
                 prof.count = Integer.valueOf(info[7]);
                 profsList.add(prof);
             }
-            Collections.shuffle(profsList);
             return profsList;
-        } catch(IOException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
         return null;
     }
-    private static List getStudents(String fileName) {
+
+    private static List<Student> getStudents(String fileName) {
         try {
             CSVReader reader = new CSVReaderBuilder(new FileReader(fileName)).withSkipLines(1).build();
             List<Student> studentList = new ArrayList<Student>();
             List<String[]> infoList = reader.readAll();
             Iterator<String[]> iterator = infoList.iterator();
 
-            while(iterator.hasNext()) {
+            while (iterator.hasNext()) {
                 String[] info = iterator.next();
                 Student student = new Student();
 
@@ -96,13 +94,11 @@ public class Main {
                 student.minors = Arrays.asList(info[8].split(","));
                 studentList.add(student);
             }
-            Collections.shuffle(studentList);
             return studentList;
-        } catch(IOException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
         return null;
     }
-
 
 }

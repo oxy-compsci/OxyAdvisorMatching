@@ -1,4 +1,5 @@
 public class Match {
+
     Student student;
     Professor professor;
 
@@ -9,8 +10,8 @@ public class Match {
 
     public int getMatchScore() {
         int score = 0;
-        for(int i = 0; i < student.majors.size(); i++) {
-            if(professor.department.equalsIgnoreCase(student.majors.get(i)))
+        for (int i = 0; i < student.majors.size(); i++) {
+            if (professor.department.equalsIgnoreCase(student.majors.get(i)))
                 score++;
         }
         return score;
