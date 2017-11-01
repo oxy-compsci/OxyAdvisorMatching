@@ -73,8 +73,17 @@ public class HillClimbing {
         studentList.addAll(map.keySet());
 
         for (int i = 0; i < studentList.size(); i++) {
-            Match currentMatch = new Match(studentList.get(i), map.get(studentList.get(i)));
-            score = score + currentMatch.getMatchScore();
+            score += scoreMatch(studentList.get(i), map.get(studentList.get(i)));
+        }
+        return score;
+    }
+
+    public int scoreMatch(Student student, Professor professor) {
+        int score = 0;
+        for (int i = 0; i < student.majors.size(); i++) {
+            if (professor.department.equalsIgnoreCase(student.majors.get(i))) {
+                score++;
+            }
         }
         return score;
     }
