@@ -2,20 +2,56 @@
 import com.opencsv.CSVReaderBuilder;
 import com.opencsv.CSVReader;
 
+import java.io.PrintWriter;
 import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+
 import java.util.*;
 
 public class Main {
+
+    private static final String FILE_HEADER = "Student ID,Student Name,Majors,Minors,Professor ID,Professor Name,Departments,Count";
+    private static final String NEW_LINE_SEPARATOR = "\n";
+    private static final String COMMA_DELIMITER = ",";
+
     public static void main(String[] args) {
-        List<Professor> professors = getProfessors("/Users/stephanieangulo/Desktop/cs-stuff/fall-2017/advisorMatch/professors.csv");
-        List<Student> students = getStudents("/Users/stephanieangulo/Desktop/cs-stuff/fall-2017/advisorMatch/students.csv");
+        List<Professor> professors = getProfessors("professors.csv");
+        List<Student> students = getStudents("students.csv");
         HillClimbing experiment = new HillClimbing();
         Map<Student, Professor> bestMap = experiment.findBestMatches(students, professors);
-//        for (Map.Entry<Student, Professor> entry : bestMap.entrySet()) {
-//            System.out.println( entry.getKey().last +",  " + entry.getKey().majors + " : " +
-//                    entry.getValue().last + ", " + entry.getValue().department);
-//        }
+
+        FileWriter writer = null;
+        try {
+            writer = new FileWriter("answer.csv");
+            writer.append(FILE_HEADER.toString());
+            writer.append(NEW_LINE_SEPARATOR);
+            writer.append(getCSVFile(bestMap));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+    }
+    private static String getCSVFile(Map<Student, Professor> map) {
+        String data = "";
+        List<Student>students = new ArrayList<Student>(map.keySet());
+        Iterator<Student> iterator = students.iterator();
+
+        while(iterator.hasNext()) {
+            Student student = iterator.next();
+            Professor professor = map.get(student);
+            data = data + student.id + COMMA_DELIMITER;
+            data = data + student.last + " " + student.first + COMMA_DELIMITER;
+            data = data + student.majors.toString().replaceAll(",", " ") + COMMA_DELIMITER;
+            data = data + student.minors.toString().replaceAll(",", " ") + COMMA_DELIMITER;
+            data = data + professor.id + COMMA_DELIMITER;
+            data = data + professor.last + " " + professor.first + COMMA_DELIMITER;
+            data = data + professor.department + COMMA_DELIMITER;
+            data = data + String.valueOf(professor.count) + COMMA_DELIMITER;
+            data = data + NEW_LINE_SEPARATOR;
+        }
+        return data;
     }
     private static List getProfessors(String fileName) {
         try {
