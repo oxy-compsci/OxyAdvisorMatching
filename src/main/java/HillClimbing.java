@@ -2,14 +2,14 @@ import java.util.*;
 
 public class HillClimbing {
 
-    public static final int MAX_ITERATIONS = 750;
+    public static final int NUM_SWAPS = 500;
+    public static final int NUM_RESTARTS = 10;
 
-    public Map<Student, Professor> hillClimb(Map<Student, Professor> initialMap, int numSwaps) {
+    public Map<Student, Professor> hillClimbStep(Map<Student, Professor> initialMap, int initialScore) {
         Map<Student, Professor> nextMap = null;
         Map<Student, Professor> bestNextMap = null;
-        int bestScore = -1;
-        int nextScore = -1;
-        for (int swap = 0; swap < numSwaps; swap++) {
+        int bestScore = initialScore;
+        for (int swap = 0; swap < NUM_SWAPS; swap++) {
             nextMap = (HashMap<Student, Professor>) ((HashMap<Student, Professor>) initialMap).clone();
             Random random = new Random();
             List<Student> keys = new ArrayList<Student>(nextMap.keySet());
@@ -20,10 +20,10 @@ public class HillClimbing {
             nextMap.put(randomKey1, nextMap.get(randomKey2));
             nextMap.put(randomKey2, temp1);
 
-            nextScore = score(nextMap);
-            if (bestNextMap == null || nextScore > bestScore) {
+            int nextScore = score(nextMap);
+            if (nextScore > bestScore) {
                 bestNextMap = nextMap;
-                bestScore = score(nextMap);
+                bestScore = nextScore;
             }
         }
         return bestNextMap;
@@ -31,25 +31,51 @@ public class HillClimbing {
     //whats a good score??? with this data.
     //focus on prints out for data analysis.
 
-    public Map<Student, Professor> findBestMatches(List<Student> students, List<Professor> professors) {
-        int generation = 0;
-        Map<Student, Professor> currentMap = createMap(students, professors);
+    public Map<Student, Professor> hillClimb(Map<Student, Professor> initMap) {
+        int step = 0;
+        Map<Student, Professor> currentMap = initMap;
+        int currentScore = score(currentMap);
         Map<Student, Professor> nextMap;
-        while (generation < MAX_ITERATIONS) {
-            nextMap = hillClimb(currentMap, 500);
-            int currentScore = score(currentMap);
-            int nextScore = score(nextMap);
-            // System.out.println("Generation #" + (generation+1));
-            // System.out.println("Current score: " + currentScore);
-            // System.out.println("Next score: " + nextScore);
-            // System.out.println("-----------------------");
-            if (nextScore > currentScore) {
-                currentMap.clear();
-                currentMap.putAll(nextMap);
+        while (true) {
+            nextMap = hillClimbStep(currentMap, currentScore);
+            if (nextMap == null) {
+                break;
+            } else {
+                int nextScore = score(nextMap);
+                System.out.println("    Generation #" + step + " score: " + nextScore + " > " + currentScore);
+                if (nextScore > currentScore) {
+                    currentMap.clear();
+                    currentMap.putAll(nextMap);
+                    currentScore = nextScore;
+                } else {
+                    break;
+                }
             }
-            generation++;
+            step++;
         }
         return currentMap;
+    }
+
+    public Map<Student, Professor> randomRestartHillClimb(List<Student> students, List<Professor> professors) {
+        Map<Student, Professor> bestMap = null;
+        int bestScore = -1;
+        for (int restart = 0; restart < NUM_RESTARTS; restart++) {
+            Map<Student, Professor> randomMap = createMap(students, professors);
+            Map<Student, Professor> currentMap = hillClimb(randomMap);
+            int currentScore = score(currentMap);
+            if (bestMap == null || currentScore > bestScore) {
+                System.out.println("Restart #" + restart + " score: " + currentScore + " > " + bestScore);
+                bestMap = currentMap;
+                bestScore = currentScore;
+            } else {
+                System.out.println("Restart #" + restart + " score: " + currentScore + " <= " + bestScore);
+            }
+        }
+        return bestMap;
+    }
+
+    public Map<Student, Professor> findBestMatches(List<Student> students, List<Professor> professors) {
+        return randomRestartHillClimb(students, professors);
     }
 
     public Map<Student, Professor> createMap(List<Student> students, List<Professor> professors) {
