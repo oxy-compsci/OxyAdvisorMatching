@@ -5,7 +5,7 @@ public class HillClimbing {
     public static final int NUM_SWAPS = 250;
     public static final int NUM_RESTARTS = 25;
 
-    Map<Student, String> reasons = new HashMap<Student, String>();
+    Map<Student, String> reasons = new HashMap<>();
 
     public Map<Student, Professor> hillClimbStep(Map<Student, Professor> initialMap, double initialScore) {
         Map<Student, Professor> nextMap;
@@ -42,7 +42,7 @@ public class HillClimbing {
                 break;
             } else {
                 double nextScore = score(nextMap);
-//                System.out.println("    Generation #" + step + " score: " + nextScore + " > " + currentScore);
+                System.out.println("    Generation #" + step + " score: " + nextScore + " > " + currentScore);
                 if (nextScore > currentScore) {
                     currentMap.clear();
                     currentMap.putAll(nextMap);
@@ -97,7 +97,6 @@ public class HillClimbing {
         double score = 0;
         ArrayList<Student> studentList = new ArrayList<Student>();
         studentList.addAll(map.keySet());
-
         for (int i = 0; i < studentList.size(); i++) {
             score += scoreMatch(studentList.get(i), map.get(studentList.get(i)));
         }
@@ -109,12 +108,12 @@ public class HillClimbing {
         String reason = "randomly matched";
         reasons.put(student, reason);
         for (int i = 0; i < student.majors.size(); i++) {
-            Data data = new Data();
+            Data data = new Data(student.majors.get(i), professor.department);
             if (professor.department.equalsIgnoreCase(student.majors.get(i))) {
                 reason = "major and department matches directly";
                 reasons.replace(student, reason);
                 score++;
-            } else if(data.isRelatedField(student.majors.get(i), professor.department)) {
+            } else if(data.isRelatedField()) {
                 reason = "major and department are related";
                 reasons.replace(student, reason);
                 score = score + .5;

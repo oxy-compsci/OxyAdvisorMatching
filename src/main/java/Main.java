@@ -8,8 +8,8 @@ import java.io.IOException;
 import java.util.*;
 
 public class Main {
-
-    private static final String FILE_HEADER = "Student ID,Student Name,Majors,Professor ID,Professor Name,Departments";
+    private static final String ANSWER_FILE_HEADER = "Student Name,Majors,Professor Name,Departments";
+    private static final String EXPLANATION_FILE_HEADER = "Student's Majors,Professor's Department, Reason of Matching";
     private static final String NEW_LINE_SEPARATOR = "\n";
     private static final String COMMA_DELIMITER = ",";
 
@@ -18,10 +18,10 @@ public class Main {
         List<Student> students = getStudents("students.csv");
         HillClimbing experiment = new HillClimbing();
         Map<Student, Professor> bestMap = experiment.findBestMatches(students, professors);
-        String[] files = getMatchesCSVFile(bestMap, experiment.reasons);
+        String[] files = getCSVFiles(bestMap, experiment.reasons);
         try {
             FileWriter writer = new FileWriter("answer.csv");
-            writer.append(FILE_HEADER);
+            writer.append(ANSWER_FILE_HEADER);
             writer.append(NEW_LINE_SEPARATOR);
             writer.append(files[0]);
         } catch (IOException e) {
@@ -29,16 +29,15 @@ public class Main {
         }
         try {
             FileWriter writer = new FileWriter("explanation.csv");
-            writer.append(FILE_HEADER);
+            writer.append(EXPLANATION_FILE_HEADER);
             writer.append(NEW_LINE_SEPARATOR);
             writer.append(files[1]);
         } catch (IOException e) {
             e.printStackTrace();
         }
-
     }
 
-    private static String[] getMatchesCSVFile(Map<Student, Professor> map, Map<Student, String> reasons) {
+    private static String[] getCSVFiles(Map<Student, Professor> map, Map<Student, String> reasons) {
         String[] files = new String[2];
         String match = "";
         String explanation = "";
@@ -49,14 +48,10 @@ public class Main {
             Student student = iterator.next();
             Professor professor = map.get(student);
             String reason = reasons.get(student);
-            match = match + student.id + COMMA_DELIMITER;
             match = match + student.last + " " + student.first + COMMA_DELIMITER;
             match = match + student.majors.toString().replaceAll(",", " ") + COMMA_DELIMITER;
-            match = match + student.minors.toString().replaceAll(",", " ") + COMMA_DELIMITER;
-            match = match + professor.id + COMMA_DELIMITER;
             match = match + professor.last + " " + professor.first + COMMA_DELIMITER;
             match = match + professor.department + COMMA_DELIMITER;
-            match = match + String.valueOf(professor.count) + COMMA_DELIMITER;
             match = match + NEW_LINE_SEPARATOR;
 
             explanation = explanation + student.majors.toString().replaceAll(",", " ") + COMMA_DELIMITER;
