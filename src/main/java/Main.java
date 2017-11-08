@@ -9,7 +9,7 @@ import java.util.*;
 
 public class Main {
 
-    private static final String FILE_HEADER = "Student ID,Student Name,Majors,Minors,Professor ID,Professor Name,Departments,Count";
+    private static final String FILE_HEADER = "Student ID,Student Name,Majors,Professor ID,Professor Name,Departments";
     private static final String NEW_LINE_SEPARATOR = "\n";
     private static final String COMMA_DELIMITER = ",";
 
@@ -18,37 +18,55 @@ public class Main {
         List<Student> students = getStudents("students.csv");
         HillClimbing experiment = new HillClimbing();
         Map<Student, Professor> bestMap = experiment.findBestMatches(students, professors);
-
+        String[] files = getMatchesCSVFile(bestMap, experiment.reasons);
         try {
             FileWriter writer = new FileWriter("answer.csv");
             writer.append(FILE_HEADER);
             writer.append(NEW_LINE_SEPARATOR);
-            writer.append(getCSVFile(bestMap));
+            writer.append(files[0]);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        try {
+            FileWriter writer = new FileWriter("explanation.csv");
+            writer.append(FILE_HEADER);
+            writer.append(NEW_LINE_SEPARATOR);
+            writer.append(files[1]);
         } catch (IOException e) {
             e.printStackTrace();
         }
 
     }
 
-    private static String getCSVFile(Map<Student, Professor> map) {
-        String data = "";
+    private static String[] getMatchesCSVFile(Map<Student, Professor> map, Map<Student, String> reasons) {
+        String[] files = new String[2];
+        String match = "";
+        String explanation = "";
         List<Student> students = new ArrayList<Student>(map.keySet());
         Iterator<Student> iterator = students.iterator();
 
         while (iterator.hasNext()) {
             Student student = iterator.next();
             Professor professor = map.get(student);
-            data = data + student.id + COMMA_DELIMITER;
-            data = data + student.last + " " + student.first + COMMA_DELIMITER;
-            data = data + student.majors.toString().replaceAll(",", " ") + COMMA_DELIMITER;
-            data = data + student.minors.toString().replaceAll(",", " ") + COMMA_DELIMITER;
-            data = data + professor.id + COMMA_DELIMITER;
-            data = data + professor.last + " " + professor.first + COMMA_DELIMITER;
-            data = data + professor.department + COMMA_DELIMITER;
-            data = data + String.valueOf(professor.count) + COMMA_DELIMITER;
-            data = data + NEW_LINE_SEPARATOR;
+            String reason = reasons.get(student);
+            match = match + student.id + COMMA_DELIMITER;
+            match = match + student.last + " " + student.first + COMMA_DELIMITER;
+            match = match + student.majors.toString().replaceAll(",", " ") + COMMA_DELIMITER;
+            match = match + student.minors.toString().replaceAll(",", " ") + COMMA_DELIMITER;
+            match = match + professor.id + COMMA_DELIMITER;
+            match = match + professor.last + " " + professor.first + COMMA_DELIMITER;
+            match = match + professor.department + COMMA_DELIMITER;
+            match = match + String.valueOf(professor.count) + COMMA_DELIMITER;
+            match = match + NEW_LINE_SEPARATOR;
+
+            explanation = explanation + student.majors.toString().replaceAll(",", " ") + COMMA_DELIMITER;
+            explanation = explanation + professor.department + COMMA_DELIMITER;
+            explanation = explanation + reason + COMMA_DELIMITER;
+            explanation = explanation + NEW_LINE_SEPARATOR;
         }
-        return data;
+        files[0] = match;
+        files[1] = explanation;
+        return files;
     }
 
     private static List<Professor> getProfessors(String fileName) {
