@@ -1,18 +1,15 @@
-
 import com.opencsv.CSVReaderBuilder;
 import com.opencsv.CSVReader;
 
-import java.io.PrintWriter;
 import java.io.FileReader;
 import java.io.FileWriter;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 
 import java.util.*;
 
 public class Main {
-
-    private static final String FILE_HEADER = "Student ID,Student Name,Majors,Minors,Professor ID,Professor Name,Departments,Count";
+    private static final String ANSWER_FILE_HEADER = "Student Name,Majors,Professor Name,Departments";
+    private static final String EXPLANATION_FILE_HEADER = "Student's Majors,Professor's Department, Reason of Matching";
     private static final String NEW_LINE_SEPARATOR = "\n";
     private static final String COMMA_DELIMITER = ",";
 
@@ -21,46 +18,60 @@ public class Main {
         List<Student> students = getStudents("students.csv");
         HillClimbing experiment = new HillClimbing();
         Map<Student, Professor> bestMap = experiment.findBestMatches(students, professors);
-
-        FileWriter writer = null;
+        String[] files = getCSVFiles(bestMap, experiment.reasons);
         try {
-            writer = new FileWriter("answer.csv");
-            writer.append(FILE_HEADER.toString());
+            FileWriter writer = new FileWriter("answer.csv");
+            writer.append(ANSWER_FILE_HEADER);
             writer.append(NEW_LINE_SEPARATOR);
-            writer.append(getCSVFile(bestMap));
+            writer.append(files[0]);
         } catch (IOException e) {
             e.printStackTrace();
         }
-
+        try {
+            FileWriter writer = new FileWriter("explanation.csv");
+            writer.append(EXPLANATION_FILE_HEADER);
+            writer.append(NEW_LINE_SEPARATOR);
+            writer.append(files[1]);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
-    private static String getCSVFile(Map<Student, Professor> map) {
-        String data = "";
-        List<Student>students = new ArrayList<Student>(map.keySet());
+
+    private static String[] getCSVFiles(Map<Student, Professor> map, Map<Student, String> reasons) {
+        String[] files = new String[2];
+        String match = "";
+        String explanation = "";
+        List<Student> students = new ArrayList<Student>(map.keySet());
         Iterator<Student> iterator = students.iterator();
 
-        while(iterator.hasNext()) {
+        while (iterator.hasNext()) {
             Student student = iterator.next();
             Professor professor = map.get(student);
-            data = data + student.id + COMMA_DELIMITER;
-            data = data + student.last + " " + student.first + COMMA_DELIMITER;
-            data = data + student.majors.toString().replaceAll(",", " ") + COMMA_DELIMITER;
-            data = data + student.minors.toString().replaceAll(",", " ") + COMMA_DELIMITER;
-            data = data + professor.id + COMMA_DELIMITER;
-            data = data + professor.last + " " + professor.first + COMMA_DELIMITER;
-            data = data + professor.department + COMMA_DELIMITER;
-            data = data + String.valueOf(professor.count) + COMMA_DELIMITER;
-            data = data + NEW_LINE_SEPARATOR;
+            String reason = reasons.get(student);
+            match = match + student.last + " " + student.first + COMMA_DELIMITER;
+            match = match + student.majors.toString().replaceAll(",", " ") + COMMA_DELIMITER;
+            match = match + professor.last + " " + professor.first + COMMA_DELIMITER;
+            match = match + professor.department + COMMA_DELIMITER;
+            match = match + NEW_LINE_SEPARATOR;
+
+            explanation = explanation + student.majors.toString().replaceAll(",", " ") + COMMA_DELIMITER;
+            explanation = explanation + professor.department + COMMA_DELIMITER;
+            explanation = explanation + reason + COMMA_DELIMITER;
+            explanation = explanation + NEW_LINE_SEPARATOR;
         }
-        return data;
+        files[0] = match;
+        files[1] = explanation;
+        return files;
     }
-    private static List getProfessors(String fileName) {
+
+    private static List<Professor> getProfessors(String fileName) {
         try {
             CSVReader reader = new CSVReaderBuilder(new FileReader(fileName)).withSkipLines(1).build();
             List<Professor> profsList = new ArrayList<Professor>();
             List<String[]> infoList = reader.readAll();
             Iterator<String[]> iterator = infoList.iterator();
 
-            while(iterator.hasNext()) {
+            while (iterator.hasNext()) {
                 String[] info = iterator.next();
                 Professor prof = new Professor();
                 prof.id = info[0];
@@ -70,21 +81,21 @@ public class Main {
                 prof.count = Integer.valueOf(info[7]);
                 profsList.add(prof);
             }
-            Collections.shuffle(profsList);
             return profsList;
-        } catch(IOException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
         return null;
     }
-    private static List getStudents(String fileName) {
+
+    private static List<Student> getStudents(String fileName) {
         try {
             CSVReader reader = new CSVReaderBuilder(new FileReader(fileName)).withSkipLines(1).build();
             List<Student> studentList = new ArrayList<Student>();
             List<String[]> infoList = reader.readAll();
             Iterator<String[]> iterator = infoList.iterator();
 
-            while(iterator.hasNext()) {
+            while (iterator.hasNext()) {
                 String[] info = iterator.next();
                 Student student = new Student();
 
@@ -96,13 +107,11 @@ public class Main {
                 student.minors = Arrays.asList(info[8].split(","));
                 studentList.add(student);
             }
-            Collections.shuffle(studentList);
             return studentList;
-        } catch(IOException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
         return null;
     }
-
 
 }

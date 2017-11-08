@@ -1,6 +1,7 @@
 import java.util.List;
 
 public class Student {
+
     String id, status, last, first;
     List<String> majors, minors;
 
