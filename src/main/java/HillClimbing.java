@@ -2,8 +2,8 @@ import java.util.*;
 
 public class HillClimbing {
 
-    public static final int NUM_SWAPS = 250;
-    public static final int NUM_RESTARTS = 25;
+    public static final int NUM_SWAPS = 100;
+    public static final int NUM_RESTARTS = 10;
 
     Map<Student, String> reasons = new HashMap<>();
 
@@ -42,7 +42,7 @@ public class HillClimbing {
                 break;
             } else {
                 double nextScore = score(nextMap);
-                System.out.println("    Generation #" + step + " score: " + nextScore + " > " + currentScore);
+//                System.out.println("    Generation #" + step + " score: " + nextScore + " > " + currentScore);
                 if (nextScore > currentScore) {
                     currentMap.clear();
                     currentMap.putAll(nextMap);
@@ -64,11 +64,11 @@ public class HillClimbing {
             Map<Student, Professor> currentMap = hillClimb(randomMap);
             double currentScore = score(currentMap);
             if (bestMap == null || currentScore > bestScore) {
-                System.out.println("Restart #" + restart + " score: " + currentScore + " > " + bestScore);
+//                System.out.println("Restart #" + restart + " score: " + currentScore + " > " + bestScore);
                 bestMap = currentMap;
                 bestScore = currentScore;
             } else {
-                System.out.println("Restart #" + restart + " score: " + currentScore + " <= " + bestScore);
+//                System.out.println("Restart #" + restart + " score: " + currentScore + " <= " + bestScore);
             }
         }
         return bestMap;

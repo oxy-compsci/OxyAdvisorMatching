@@ -18,51 +18,60 @@ public class Main {
         List<Student> students = getStudents("students.csv");
         HillClimbing experiment = new HillClimbing();
         Map<Student, Professor> bestMap = experiment.findBestMatches(students, professors);
-        String[] files = getCSVFiles(bestMap, experiment.reasons);
-        try {
-            FileWriter writer = new FileWriter("answer.csv");
-            writer.append(ANSWER_FILE_HEADER);
-            writer.append(NEW_LINE_SEPARATOR);
-            writer.append(files[0]);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        try {
-            FileWriter writer = new FileWriter("explanation.csv");
-            writer.append(EXPLANATION_FILE_HEADER);
-            writer.append(NEW_LINE_SEPARATOR);
-            writer.append(files[1]);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
 
-    private static String[] getCSVFiles(Map<Student, Professor> map, Map<Student, String> reasons) {
-        String[] files = new String[2];
-        String match = "";
-        String explanation = "";
+        writeMatchFile("answer.csv", bestMap);
+        writeExplanationFile("explanation.csv", bestMap, experiment.reasons);
+
+    }
+    private static void writeMatchFile(String filename, Map<Student, Professor> map) {
         List<Student> students = new ArrayList<Student>(map.keySet());
         Iterator<Student> iterator = students.iterator();
-
-        while (iterator.hasNext()) {
-            Student student = iterator.next();
-            Professor professor = map.get(student);
-            String reason = reasons.get(student);
-            match = match + student.last + " " + student.first + COMMA_DELIMITER;
-            match = match + student.majors.toString().replaceAll(",", " ") + COMMA_DELIMITER;
-            match = match + professor.last + " " + professor.first + COMMA_DELIMITER;
-            match = match + professor.department + COMMA_DELIMITER;
-            match = match + NEW_LINE_SEPARATOR;
-
-            explanation = explanation + student.majors.toString().replaceAll(",", " ") + COMMA_DELIMITER;
-            explanation = explanation + professor.department + COMMA_DELIMITER;
-            explanation = explanation + reason + COMMA_DELIMITER;
-            explanation = explanation + NEW_LINE_SEPARATOR;
+        try {
+            FileWriter writer = new FileWriter(filename);
+            writer.append(ANSWER_FILE_HEADER);
+            writer.append(NEW_LINE_SEPARATOR);
+            while(iterator.hasNext()) {
+                Student student = iterator.next();
+                Professor professor = map.get(student);
+                String match = "";
+                match = match + student.last + " " + student.first + COMMA_DELIMITER;
+                match = match + student.majors.toString().replaceAll(",", " ") + COMMA_DELIMITER;
+                match = match + professor.last + " " + professor.first + COMMA_DELIMITER;
+                match = match + professor.department + COMMA_DELIMITER;
+                match = match + NEW_LINE_SEPARATOR;
+                System.out.println(match);
+                writer.append(match);
+                writer.flush();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
         }
-        files[0] = match;
-        files[1] = explanation;
-        return files;
     }
+
+    private static void writeExplanationFile(String filename, Map<Student, Professor> map, Map<Student, String> reasons) {
+        List<Student> students = new ArrayList<Student>(map.keySet());
+        Iterator<Student> iterator = students.iterator();
+        try {
+            FileWriter writer = new FileWriter(filename);
+            writer.append(EXPLANATION_FILE_HEADER);
+            writer.append(NEW_LINE_SEPARATOR);
+            while(iterator.hasNext()) {
+                String explanation = "";
+                Student student = iterator.next();
+                Professor professor = map.get(student);
+                String reason = reasons.get(student);
+                explanation = explanation + student.majors.toString().replaceAll(",", " ") + COMMA_DELIMITER;
+                explanation = explanation + professor.department + COMMA_DELIMITER;
+                explanation = explanation + reason + COMMA_DELIMITER;
+                explanation = explanation + NEW_LINE_SEPARATOR;
+                writer.append(explanation);
+                writer.flush();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
 
     private static List<Professor> getProfessors(String fileName) {
         try {
