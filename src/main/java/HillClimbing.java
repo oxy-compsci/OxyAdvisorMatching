@@ -2,10 +2,10 @@ import java.util.*;
 
 public class HillClimbing {
 
-    public static final int NUM_SWAPS = 250;
-    public static final int NUM_RESTARTS = 25;
+    public static final int NUM_SWAPS = 50;
+    public static final int NUM_RESTARTS = 5;
 
-    Map<Student, String> reasons = new HashMap<>();
+    Map<Student, String> explanations = new HashMap<>();
 
     public Map<Student, Professor> hillClimbStep(Map<Student, Professor> initialMap, double initialScore) {
         Map<Student, Professor> nextMap;
@@ -61,16 +61,21 @@ public class HillClimbing {
         double bestScore = -1;
         for (int restart = 0; restart < NUM_RESTARTS; restart++) {
             Map<Student, Professor> randomMap = createMap(students, professors);
+            Map<Student, String> previousExplanations = explanations;
             Map<Student, Professor> currentMap = hillClimb(randomMap);
             double currentScore = score(currentMap);
+            Map<Student, String> currentExplanations = explanations;
             if (bestMap == null || currentScore > bestScore) {
                 System.out.println("Restart #" + restart + " score: " + currentScore + " > " + bestScore);
                 bestMap = currentMap;
                 bestScore = currentScore;
+                explanations = currentExplanations;
             } else {
+                explanations = previousExplanations;
                 System.out.println("Restart #" + restart + " score: " + currentScore + " <= " + bestScore);
             }
         }
+
         return bestMap;
     }
 
@@ -104,21 +109,34 @@ public class HillClimbing {
     }
 
     public double scoreMatch(Student student, Professor professor) {
+        String reason;
         double score = 0;
-        String reason = "randomly matched";
-        reasons.put(student, reason);
+        ArrayList<String> reasonsArr = new ArrayList<>();
         for (int i = 0; i < student.majors.size(); i++) {
-            Data data = new Data(student.majors.get(i), professor.department);
-            if (professor.department.equalsIgnoreCase(student.majors.get(i))) {
-                reason = "major and department matches directly";
-                reasons.replace(student, reason);
+            Data data = new Data(professor.department, student.majors.get(i));
+            if (professor.department.equals(student.majors.get(i))) {
+                reason = "Student's major: <<"+ student.majors.get(i) + ">> and professor's department: <<"+ professor.department +">> match";
+                reasonsArr.add(reason);
+                explanations.replace(student, reason);
                 score++;
             } else if(data.isRelatedField()) {
-                reason = "major and department are related";
-                reasons.replace(student, reason);
+                reason = "Student's major: <<"+ student.majors.get(i) + ">> and professor's department: <<"+ professor.department +">> are related";
+                reasonsArr.add(reason);
+                explanations.replace(student, reason);
                 score = score + .5;
             }
         }
+
+        if(reasonsArr.isEmpty()) {
+            explanations.put(student, "Randomly matched");
+        } else {
+            explanations.put(student, reasonsArr.toString().replaceAll(",", " | "));
+        }
+
         return score;
+    }
+
+    public Map<Student, String> getExplanations() {
+        return explanations;
     }
 }
