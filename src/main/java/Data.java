@@ -1,11 +1,19 @@
 import java.util.Arrays;
 
 public class Data {
-    static String[] bio = new String[]{"Biochemistry", "Chemistry", "Geology","Kinesiology"};
-    static String[] biochem = new String[]{"Biology", "Chemistry", "Geology","Kinesiology"};
-    static String[] chem = new String[]{"Biology", "Chemistry", "Geology","Kinesiology", "Physics"};
-    static String[] cogsci = new String[]{"Computer Science", "Philosophy", "Psychology"};
-    static String[] compsci = new String[]{"Cognitive Science", "Mathematics"};
+    static String[] sciences = new String[]{"Biochemistry", "Biology", "Chemistry", " Cognitive Science",
+        "Computer Science", "Geology", "Kinesiology","Mathematics", "Physics"};
+
+    static String[] socialSciences = new String[]{"Psychology", "Sociology", "Urban and Environmental Policy",
+            "Urban & Environmental Policy", "Economics","History", "Philosophy", "Politics", "American Studies",
+            "Comparative Studies in Literature and Culture", "Comparative Studies in Literature & Culture",
+            "Diplomacy & World Affairs", "Diplomacy and World Affairs", "Latino/a and Latin American Studies",
+            "Latino/a & Latin American Studies"};
+
+    static String[] artsAndHumanities = new String[] {"Art and Art History","Art & Art History","Media Arts and Culture",
+            "Media Arts & Culture", "Critical Theory and Social Justice", "Critical Theory & Social Justice", "English",
+            "Chinese", "French", "German", "Japanese", "Music", "Religious Studies", "Spanish", "Theater",
+            "East Asian Languages and Cultures", "East Asian Languages & Cultures","Group Language"};
 
     String department, intendedMajor;
 
@@ -14,60 +22,20 @@ public class Data {
         this.intendedMajor = intendedMajor;
     }
     public boolean isRelatedField() {
-        if(intendedMajor.equalsIgnoreCase("Biology")) {
-            return Arrays.asList(bio).contains(department);
-        } else if(intendedMajor.equalsIgnoreCase("Biochemistry")) {
-            return Arrays.asList(biochem).contains(department);
-        } else if(intendedMajor.equalsIgnoreCase("Chemistry")) {
-            return Arrays.asList(chem).contains(department);
-        } else if(intendedMajor.equalsIgnoreCase("Cognitive Science")) {
-            return Arrays.asList(cogsci).contains(department);
-        } else if(intendedMajor.equalsIgnoreCase("Computer Science")) {
-            return Arrays.asList(compsci).contains(department);
+        if(Arrays.asList(sciences).contains(intendedMajor)) {
+            return Arrays.asList(sciences).contains(department);
+        } else if(Arrays.asList(socialSciences).contains(intendedMajor)) {
+            return Arrays.asList(socialSciences).contains(department);
+        } else if(Arrays.asList(artsAndHumanities).contains(intendedMajor)) {
+            return Arrays.asList(artsAndHumanities).contains(department);
         }
         return false;
     }
 
     /*  List of departments:
-    American Studies
-    Art and Art History
-    Biochemistry
-    Biology
-    Chemistry
-    Chinese
-    Classical Studies (minor)
-    Cognitive Science
-    Comparative Studies in Literature and Culture
-    Computer Science
-    Critical Theory and Social Justice
-    Diplomacy and World Affairs
+
     East Asian Languages and Cultures
-    Education (minor)
-    English
-    French
-    Gender, Women, and Sexuality Studies (minor)
-    Geology
-    German
+
     Group Language
-    History
-    Interdisciplinary Writing
-    Japanese
-    Kinesiology
-    Latino/a and Latin American Studies
-    Linguistics (minor)
-    Mathematics
-    Media Arts and Culture
-    Music
-    Neuroscience (minor)
-    Philosophy
-    Physics
-    Politics
-    Psychology
-    Public Health (minor)
-    Religious Studies
-    Russian (minor)
-    Sociology
-    Spanish
-    Theater
-    Urban and Environmental Policy*/
+    */
 }
