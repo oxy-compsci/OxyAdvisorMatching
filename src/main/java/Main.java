@@ -20,7 +20,7 @@ public class Main {
         Map<Student, Professor> bestMap = experiment.findBestMatches(students, professors);
 
         writeMatchFile("answer.csv", bestMap);
-        writeExplanationFile("explanation.csv", bestMap, experiment.explanations);
+        writeExplanationFile("explanation.csv", bestMap, experiment.getExplanations());
 
     }
     private static void writeMatchFile(String filename, Map<Student, Professor> map) {
@@ -39,7 +39,6 @@ public class Main {
                 match = match + professor.last + " " + professor.first + COMMA_DELIMITER;
                 match = match + professor.department + COMMA_DELIMITER;
                 match = match + NEW_LINE_SEPARATOR;
-//                System.out.println(match);
                 writer.append(match);
                 writer.flush();
             }
@@ -60,7 +59,7 @@ public class Main {
                 Student student = iterator.next();
                 Professor professor = map.get(student);
                 String reason = reasons.get(student);
-                explanation = explanation + student.majors.toString().replaceAll(",", " ") + COMMA_DELIMITER;
+                explanation = explanation + student.majors.toString() + COMMA_DELIMITER;
                 explanation = explanation + professor.department + COMMA_DELIMITER;
                 explanation = explanation + reason + COMMA_DELIMITER;
                 explanation = explanation + NEW_LINE_SEPARATOR;

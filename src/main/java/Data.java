@@ -31,11 +31,4 @@ public class Data {
         }
         return false;
     }
-
-    /*  List of departments:
-
-    East Asian Languages and Cultures
-
-    Group Language
-    */
 }

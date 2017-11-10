@@ -42,7 +42,7 @@ public class HillClimbing {
                 break;
             } else {
                 double nextScore = score(nextMap);
-//                System.out.println("    Generation #" + step + " score: " + nextScore + " > " + currentScore);
+                System.out.println("    Generation #" + step + " score: " + nextScore + " > " + currentScore);
                 if (nextScore > currentScore) {
                     currentMap.clear();
                     currentMap.putAll(nextMap);
@@ -61,19 +61,21 @@ public class HillClimbing {
         double bestScore = -1;
         for (int restart = 0; restart < NUM_RESTARTS; restart++) {
             Map<Student, Professor> randomMap = createMap(students, professors);
+            Map<Student, String> previousExplanations = explanations;
             Map<Student, Professor> currentMap = hillClimb(randomMap);
-            Map<Student, String> previousExplanations = (HashMap<Student, String>)((HashMap<Student, String>) explanations).clone();
             double currentScore = score(currentMap);
+            Map<Student, String> currentExplanations = explanations;
             if (bestMap == null || currentScore > bestScore) {
-//                System.out.println("Restart #" + restart + " score: " + currentScore + " > " + bestScore);
+                System.out.println("Restart #" + restart + " score: " + currentScore + " > " + bestScore);
                 bestMap = currentMap;
                 bestScore = currentScore;
+                explanations = currentExplanations;
             } else {
-                explanations.clear();
-                explanations.putAll(previousExplanations);
-//                System.out.println("Restart #" + restart + " score: " + currentScore + " <= " + bestScore);
+                explanations = previousExplanations;
+                System.out.println("Restart #" + restart + " score: " + currentScore + " <= " + bestScore);
             }
         }
+
         return bestMap;
     }
 
@@ -107,28 +109,24 @@ public class HillClimbing {
     }
 
     public double scoreMatch(Student student, Professor professor) {
-        ArrayList<String> reasonsArr = new ArrayList<>();
         String reason;
         double score = 0;
-
+        ArrayList<String> reasonsArr = new ArrayList<>();
         for (int i = 0; i < student.majors.size(); i++) {
-            String major = student.majors.get(i);
-            String department = professor.department;
-            Data data = new Data(department, major);
-            boolean isEqual = department.equals(major);
-            boolean isRelated = data.isRelatedField();
-            if (isEqual) {
-                reason = "Student's major: ["+ student.majors.get(i) + "] and professor's department: "+ professor.department +" match directly";
+            Data data = new Data(professor.department, student.majors.get(i));
+            if (professor.department.equals(student.majors.get(i))) {
+                reason = "Student's major: <<"+ student.majors.get(i) + ">> and professor's department: <<"+ professor.department +">> match";
                 reasonsArr.add(reason);
                 explanations.replace(student, reason);
                 score++;
-            } else if(isRelated) {
-                reason = "Student's major: ["+ student.majors.get(i) + "] and professor's department: "+ professor.department +" are related";
+            } else if(data.isRelatedField()) {
+                reason = "Student's major: <<"+ student.majors.get(i) + ">> and professor's department: <<"+ professor.department +">> are related";
                 reasonsArr.add(reason);
                 explanations.replace(student, reason);
                 score = score + .5;
             }
         }
+
         if(reasonsArr.isEmpty()) {
             explanations.put(student, "Randomly matched");
         } else {
@@ -136,5 +134,9 @@ public class HillClimbing {
         }
 
         return score;
+    }
+
+    public Map<Student, String> getExplanations() {
+        return explanations;
     }
 }
