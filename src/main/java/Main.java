@@ -35,13 +35,14 @@ public class Main {
                 Professor professor = map.get(student);
                 String match = "";
                 match = match + student.last + " " + student.first + COMMA_DELIMITER;
-                match = match + student.majors.toString().replaceAll(",", " ") + COMMA_DELIMITER;
+                match = match + student.majors.toString().replaceAll(",", " AND ") + COMMA_DELIMITER;
                 match = match + professor.last + " " + professor.first + COMMA_DELIMITER;
                 match = match + professor.department + COMMA_DELIMITER;
                 match = match + NEW_LINE_SEPARATOR;
                 writer.append(match);
                 writer.flush();
             }
+            writer.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -59,13 +60,14 @@ public class Main {
                 Student student = iterator.next();
                 Professor professor = map.get(student);
                 String reason = reasons.get(student);
-                explanation = explanation + student.majors.toString() + COMMA_DELIMITER;
+                explanation = explanation + student.majors.toString().replaceAll("," , " AND ") + COMMA_DELIMITER;
                 explanation = explanation + professor.department + COMMA_DELIMITER;
                 explanation = explanation + reason + COMMA_DELIMITER;
                 explanation = explanation + NEW_LINE_SEPARATOR;
                 writer.append(explanation);
                 writer.flush();
             }
+            writer.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
