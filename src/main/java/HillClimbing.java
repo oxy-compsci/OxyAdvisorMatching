@@ -115,17 +115,17 @@ public class HillClimbing {
         for (int i = 0; i < student.majors.size(); i++) {
             Data data = new Data(professor.department, student.majors.get(i));
             if (professor.department.equals(student.majors.get(i))) {
-                reason = "Student's major: <<"+ student.majors.get(i) + ">> and professor's department: <<"+ professor.department +">> match";
+                reason = "The student wants to major in the advisor's department ("+ student.majors.get(i) + ")";
                 reasonsArr.add(reason);
-                score++;
+                score = score + 1;
             } else if(data.isRelatedField()) {
-                reason = "Student's major: <<" + student.majors.get(i) + ">> and professor's department: <<" + professor.department + ">> are related";
+                reason = "The student wants to major in " + student.majors.get(i) + ", which is in the same division as the advisor's department ("+ professor.department + ")";
                 reasonsArr.add(reason);
                 score = score + .75;
             }
         }
         if(professor.count < 10) {
-            reason = "Professor has few advisees <<" + professor.count + ">>";
+            reason = "Professor currently only has " + professor.count + " advisees";
             reasonsArr.add(reason);
             score = score + .5;
         }
