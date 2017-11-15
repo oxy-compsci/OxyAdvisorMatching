@@ -2,8 +2,8 @@ import java.util.*;
 
 public class HillClimbing {
 
-    public static final int NUM_SWAPS = 50;
-    public static final int NUM_RESTARTS = 5;
+    public static final int NUM_SWAPS = 250;
+    public static final int NUM_RESTARTS = 10;
 
     Map<Student, String> explanations = new HashMap<>();
 
@@ -42,7 +42,7 @@ public class HillClimbing {
                 break;
             } else {
                 double nextScore = score(nextMap);
-                System.out.println("    Generation #" + step + " score: " + nextScore + " > " + currentScore);
+//                System.out.println("    Generation #" + step + " score: " + nextScore + " > " + currentScore);
                 if (nextScore > currentScore) {
                     currentMap.clear();
                     currentMap.putAll(nextMap);
@@ -86,7 +86,7 @@ public class HillClimbing {
     public Map<Student, Professor> createMap(List<Student> students, List<Professor> professors) {
         Collections.shuffle(professors);
         Collections.shuffle(students);
-        Map<Student, Professor> studentProfMatches = new HashMap<Student, Professor>();
+        Map<Student, Professor> studentProfMatches = new HashMap<>();
         int j = 0;
         for (int i = 0; i < students.size(); i++) {
             studentProfMatches.put(students.get(i), professors.get(j));
@@ -117,14 +117,17 @@ public class HillClimbing {
             if (professor.department.equals(student.majors.get(i))) {
                 reason = "Student's major: <<"+ student.majors.get(i) + ">> and professor's department: <<"+ professor.department +">> match";
                 reasonsArr.add(reason);
-                explanations.replace(student, reason);
                 score++;
             } else if(data.isRelatedField()) {
-                reason = "Student's major: <<"+ student.majors.get(i) + ">> and professor's department: <<"+ professor.department +">> are related";
+                reason = "Student's major: <<" + student.majors.get(i) + ">> and professor's department: <<" + professor.department + ">> are related";
                 reasonsArr.add(reason);
-                explanations.replace(student, reason);
-                score = score + .5;
+                score = score + .75;
             }
+        }
+        if(professor.count < 10) {
+            reason = "Professor has few advisees <<" + professor.count + ">>";
+            reasonsArr.add(reason);
+            score = score + .5;
         }
 
         if(reasonsArr.isEmpty()) {

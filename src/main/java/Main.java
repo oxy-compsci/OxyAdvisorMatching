@@ -8,7 +8,7 @@ import java.io.IOException;
 import java.util.*;
 
 public class Main {
-    private static final String ANSWER_FILE_HEADER = "Student Name,Majors,Professor Name,Departments";
+    private static final String ANSWER_FILE_HEADER = "Student Name,Majors,Professor Name,Departments,Count";
     private static final String EXPLANATION_FILE_HEADER = "Student's Majors,Professor's Department, Reason of Matching";
     private static final String NEW_LINE_SEPARATOR = "\n";
     private static final String COMMA_DELIMITER = ",";
@@ -24,7 +24,7 @@ public class Main {
 
     }
     private static void writeMatchFile(String filename, Map<Student, Professor> map) {
-        List<Student> students = new ArrayList<Student>(map.keySet());
+        List<Student> students = new ArrayList<>(map.keySet());
         Iterator<Student> iterator = students.iterator();
         try {
             FileWriter writer = new FileWriter(filename);
@@ -35,18 +35,19 @@ public class Main {
                 Professor professor = map.get(student);
                 String match = "";
                 match = match + student.last + " " + student.first + COMMA_DELIMITER;
-                match = match + student.majors.toString().replaceAll(",", " ") + COMMA_DELIMITER;
+                match = match + student.majors.toString().replaceAll(",", " AND ") + COMMA_DELIMITER;
                 match = match + professor.last + " " + professor.first + COMMA_DELIMITER;
                 match = match + professor.department + COMMA_DELIMITER;
+                match = match + professor.count + COMMA_DELIMITER;
                 match = match + NEW_LINE_SEPARATOR;
                 writer.append(match);
                 writer.flush();
             }
+            writer.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
-
     private static void writeExplanationFile(String filename, Map<Student, Professor> map, Map<Student, String> reasons) {
         List<Student> students = new ArrayList<Student>(map.keySet());
         Iterator<Student> iterator = students.iterator();
@@ -59,19 +60,18 @@ public class Main {
                 Student student = iterator.next();
                 Professor professor = map.get(student);
                 String reason = reasons.get(student);
-                explanation = explanation + student.majors.toString() + COMMA_DELIMITER;
+                explanation = explanation + student.majors.toString().replaceAll("," , " AND ") + COMMA_DELIMITER;
                 explanation = explanation + professor.department + COMMA_DELIMITER;
                 explanation = explanation + reason + COMMA_DELIMITER;
                 explanation = explanation + NEW_LINE_SEPARATOR;
                 writer.append(explanation);
                 writer.flush();
             }
+            writer.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
-
-
     private static List<Professor> getProfessors(String fileName) {
         try {
             CSVReader reader = new CSVReaderBuilder(new FileReader(fileName)).withSkipLines(1).build();
@@ -95,7 +95,6 @@ public class Main {
         }
         return null;
     }
-
     private static List<Student> getStudents(String fileName) {
         try {
             CSVReader reader = new CSVReaderBuilder(new FileReader(fileName)).withSkipLines(1).build();
