@@ -1,10 +1,12 @@
 import java.util.*;
 
 public class HillClimbing {
+    // Constants
+    // # of swaps should be roughly equal to # of incoming students (~500)
+    public static final int NUM_SWAPS = 50;
+    public static final int NUM_RESTARTS = 5;
 
-    public static final int NUM_SWAPS = 250;
-    public static final int NUM_RESTARTS = 10;
-
+    // A map that connects individual student objects with an explanation of the best match
     Map<Student, String> explanations = new HashMap<>();
 
     public Map<Student, Professor> hillClimbStep(Map<Student, Professor> initialMap, double initialScore) {
@@ -15,13 +17,11 @@ public class HillClimbing {
             nextMap = (HashMap<Student, Professor>)((HashMap<Student, Professor>) initialMap).clone();
             Random random = new Random();
             List<Student> keys = new ArrayList<>(nextMap.keySet());
-
             Student randomKey1 = keys.get(random.nextInt(keys.size()));
             Student randomKey2 = keys.get(random.nextInt(keys.size()));
             Professor temp1 = nextMap.get(randomKey1);
             nextMap.replace(randomKey1, nextMap.get(randomKey2));
             nextMap.replace(randomKey2, temp1);
-
             double nextScore = score(nextMap);
             if (nextScore > bestScore) {
                 bestNextMap = nextMap;
@@ -33,8 +33,10 @@ public class HillClimbing {
 
     public Map<Student, Professor> hillClimb(Map<Student, Professor> initMap) {
         int step = 0;
+        Map<Student, String> nextExplanations,currentExplanations;
         Map<Student, Professor> currentMap = initMap;
         double currentScore = score(currentMap);
+        currentExplanations = (HashMap<Student, String>)((HashMap<Student, String>) explanations).clone();
         Map<Student, Professor> nextMap;
         while (true) {
             nextMap = hillClimbStep(currentMap, currentScore);
@@ -42,12 +44,15 @@ public class HillClimbing {
                 break;
             } else {
                 double nextScore = score(nextMap);
+                nextExplanations = (HashMap<Student, String>)((HashMap<Student, String>) explanations).clone();
 //                System.out.println("    Generation #" + step + " score: " + nextScore + " > " + currentScore);
                 if (nextScore > currentScore) {
                     currentMap.clear();
                     currentMap.putAll(nextMap);
                     currentScore = nextScore;
+                    explanations = nextExplanations;
                 } else {
+                    explanations = currentExplanations;
                     break;
                 }
             }
@@ -58,24 +63,24 @@ public class HillClimbing {
 
     public Map<Student, Professor> randomRestartHillClimb(List<Student> students, List<Professor> professors) {
         Map<Student, Professor> bestMap = null;
+        Map<Student, String> bestExplanations, currentExplanations;
         double bestScore = -1;
         for (int restart = 0; restart < NUM_RESTARTS; restart++) {
             Map<Student, Professor> randomMap = createMap(students, professors);
-            Map<Student, String> previousExplanations = explanations;
+            bestExplanations = (HashMap<Student, String>)((HashMap<Student, String>) explanations).clone();
             Map<Student, Professor> currentMap = hillClimb(randomMap);
             double currentScore = score(currentMap);
-            Map<Student, String> currentExplanations = explanations;
+            currentExplanations = (HashMap<Student, String>)((HashMap<Student, String>) explanations).clone();
             if (bestMap == null || currentScore > bestScore) {
                 System.out.println("Restart #" + restart + " score: " + currentScore + " > " + bestScore);
                 bestMap = currentMap;
                 bestScore = currentScore;
                 explanations = currentExplanations;
             } else {
-                explanations = previousExplanations;
+                explanations = bestExplanations;
                 System.out.println("Restart #" + restart + " score: " + currentScore + " <= " + bestScore);
             }
         }
-
         return bestMap;
     }
 
@@ -99,8 +104,9 @@ public class HillClimbing {
     }
 
     public double score(Map<Student, Professor> map) {
+        // Sums overall score of the current matching
         double score = 0;
-        ArrayList<Student> studentList = new ArrayList<Student>();
+        ArrayList<Student> studentList = new ArrayList<>();
         studentList.addAll(map.keySet());
         for (int i = 0; i < studentList.size(); i++) {
             score += scoreMatch(studentList.get(i), map.get(studentList.get(i)));
@@ -112,28 +118,33 @@ public class HillClimbing {
         String reason;
         double score = 0;
         ArrayList<String> reasonsArr = new ArrayList<>();
+
+        // Loop through list of intended majors
         for (int i = 0; i < student.majors.size(); i++) {
-            Data data = new Data(professor.department, student.majors.get(i));
+            // cross check professor's department with major
+            // add 1 to score value
             if (professor.department.equals(student.majors.get(i))) {
-                reason = "Student's major: <<"+ student.majors.get(i) + ">> and professor's department: <<"+ professor.department +">> match";
+                reason = "The student wants to major in the advisor's department ("+ student.majors.get(i) + ")";
                 reasonsArr.add(reason);
-                score++;
-            } else if(data.isRelatedField()) {
-                reason = "Student's major: <<" + student.majors.get(i) + ">> and professor's department: <<" + professor.department + ">> are related";
+                score = score + 1;
+            } else if(professor.hasRelatedDepartment(student.majors.get(i))) {
+                // add .75 to score value if major is related
+                reason = "The student is interested in (" + student.majors.get(i) + "), which is in the same division as the advisor's department ("+ professor.department + ")";
                 reasonsArr.add(reason);
                 score = score + .75;
             }
         }
+
         if(professor.count < 10) {
-            reason = "Professor has few advisees <<" + professor.count + ">>";
+            reason = "Professor currently only has (" + professor.count + ") advisees";
             reasonsArr.add(reason);
             score = score + .5;
-        }
+        } // professor no more than 10 new ones, 17 max
 
         if(reasonsArr.isEmpty()) {
             explanations.put(student, "Randomly matched");
         } else {
-            explanations.put(student, reasonsArr.toString().replaceAll(",", " | "));
+            explanations.put(student, reasonsArr.toString().replaceAll(",", "; "));
         }
 
         return score;
