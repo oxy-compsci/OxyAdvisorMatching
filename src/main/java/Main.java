@@ -17,9 +17,9 @@ public class Main {
     private static final String NEW_LINE_SEPARATOR = "\n";
     private static final String COMMA_DELIMITER = ",";
 
-    private static final String PROFESSOR_CSV_FILE_NAME = "professors.csv";
+    private static final String PROFESSOR_CSV_FILE_NAME = "updated_professors.csv";
     private static final String STUDENT_CSV_FILE_NAME = "students.csv";
-    private static final String DISCIPLINE_CSV_FILE_NAME = "categories.csv";
+    private static final String DISCIPLINE_CSV_FILE_NAME = "disciplines.csv";
     private static final String MATCHES_CSV_FILE_NAME = "matches.csv";
     private static final String EXPLANATIONS_CSV_FILE_NAME = "explanations.csv";
 
@@ -30,17 +30,16 @@ public class Main {
 
     public static void main(String[] args) {
         // Convert CSV files to objects and lists
-//        List<Professor> professors = getProfessors(PROFESSOR_CSV_FILE_NAME);
-//        List<Student> students = getStudents(STUDENT_CSV_FILE_NAME);
-//
+        professors = getProfessors(PROFESSOR_CSV_FILE_NAME);
+        students = getStudents(STUDENT_CSV_FILE_NAME);
         disciplines = getDisciplines(DISCIPLINE_CSV_FILE_NAME);
 
         // Create experiment and find best matches
-//        HillClimbing experiment = new HillClimbing();
-//        Map<Student, Professor> bestMap = experiment.findBestMatches(students, professors);
+        HillClimbing experiment = new HillClimbing();
+        Map<Student, Professor> bestMap = experiment.findBestMatches(students, professors);
 
         // Write CSV file with matches
-//        writeMatchFile(MATCHES_CSV_FILE_NAME, bestMap, experiment.getExplanations(), true);
+        writeMatchFile(MATCHES_CSV_FILE_NAME, bestMap, experiment.getExplanations(), true);
 
         // Write CSV file with explanations
 //        writeExplanationFile(EXPLANATIONS_CSV_FILE_NAME, bestMap, experiment.getExplanations());
@@ -113,12 +112,16 @@ public class Main {
 
             while (iterator.hasNext()) {
                 String[] info = iterator.next();
-                Professor prof = new Professor();
-                prof.id = info[0].trim();
-                prof.last = info[1].trim();
-                prof.first = info[2].trim();
-                prof.department = info[4].trim();
-                prof.count = Integer.valueOf(info[7].trim());
+                String id, last, first, department;
+                int count;
+
+                id = info[0].trim();
+                last = info[1].trim();
+                first = info[2].trim();
+                department = info[4].trim();
+                count = Integer.valueOf(info[7].trim());
+
+                Professor prof = new Professor(id, last, first, department, count);
                 profsList.add(prof);
             }
             reader.close();
@@ -138,13 +141,15 @@ public class Main {
 
             while (iterator.hasNext()) {
                 String[] info = iterator.next();
-                Student student = new Student();
-                student.id = info[1].trim();
-                student.status = info[2].trim();
-                student.last = info[4].trim();
-                student.first = info[3].trim();
-                student.majors = Arrays.asList((info[7].replaceAll(", ", ",")).split(","));
-                student.minors = Arrays.asList((info[8].replaceAll(", ", ",")).split(","));
+                String id,  status,  last,  first;
+                List<String> majors, minors;
+                id = info[1].trim();
+                status = info[2].trim();
+                last = info[4].trim();
+                first = info[3].trim();
+                majors = Arrays.asList((info[7].replaceAll(", ", ",")).split(","));
+                minors = Arrays.asList((info[8].replaceAll(", ", ",")).split(","));
+                Student student = new Student(id,status,last,first,majors,minors);
                 studentList.add(student);
             }
             reader.close();
@@ -158,7 +163,7 @@ public class Main {
     private static List<Discipline> getDisciplines(String fileName) {
         try {
             CSVReader reader = new CSVReaderBuilder(new FileReader(fileName)).build();
-            List<Discipline> categoryList = new ArrayList<>();
+            List<Discipline> disciplineList = new ArrayList<>();
             List<String[]> infoList = reader.readAll();
             Iterator<String[]> iterator = infoList.iterator();
 
@@ -166,10 +171,10 @@ public class Main {
                String[] info = iterator.next();
                Discipline discipline = new Discipline(info[0], Arrays.copyOfRange(info, 1, info.length));
                System.out.println(Arrays.toString(discipline.list));
-               categoryList.add(discipline);
+               disciplineList.add(discipline);
             }
             reader.close();
-            return categoryList;
+            return disciplineList;
         } catch (IOException e) {
             e.printStackTrace();
         }

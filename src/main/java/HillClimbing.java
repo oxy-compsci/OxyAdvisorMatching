@@ -2,7 +2,7 @@ import java.util.*;
 
 public class HillClimbing {
 
-    public static final int NUM_SWAPS = 75;
+    public static final int NUM_SWAPS = 50;
     public static final int NUM_RESTARTS = 5;
 
     Map<Student, String> explanations = new HashMap<>();
@@ -124,7 +124,7 @@ public class HillClimbing {
                 score = score + 1;
             }
             if(professor.hasRelatedDepartment(student.majors.get(i))) {
-                reason = "The student wants to major in " + student.majors.get(i) + " which is in the same division as the advisor's department ("+ professor.department + ")";
+                reason = "The student is interested " + student.majors.get(i) + " which is in the same division as the advisor's department ("+ professor.department + ")";
                 reasonsArr.add(reason);
                 score = score + .75;
             }

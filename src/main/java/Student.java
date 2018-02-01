@@ -5,7 +5,7 @@ public class Student {
     String id, status, last, first;
     List<String> majors, minors;
 
-    public Student() {
+    public Student(String id, String status, String last, String first, List<String> majors, List<String> minors) {
         this.id = id;
         this.status = status;
         this.last = last;
