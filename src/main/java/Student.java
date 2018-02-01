@@ -13,4 +13,6 @@ public class Student {
         this.majors = majors;
         this.minors = minors;
     }
+
+    // Probably want to create methods to clean string variables and lists
 }

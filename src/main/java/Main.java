@@ -30,9 +30,9 @@ public class Main {
 
     public static void main(String[] args) {
         // Convert CSV files to objects and lists
+        disciplines = getDisciplines(DISCIPLINE_CSV_FILE_NAME);
         professors = getProfessors(PROFESSOR_CSV_FILE_NAME);
         students = getStudents(STUDENT_CSV_FILE_NAME);
-        disciplines = getDisciplines(DISCIPLINE_CSV_FILE_NAME);
 
         // Create experiment and find best matches
         HillClimbing experiment = new HillClimbing();
@@ -42,7 +42,7 @@ public class Main {
         writeMatchFile(MATCHES_CSV_FILE_NAME, bestMap, experiment.getExplanations(), true);
 
         // Write CSV file with explanations
-//        writeExplanationFile(EXPLANATIONS_CSV_FILE_NAME, bestMap, experiment.getExplanations());
+//       writeExplanationFile(EXPLANATIONS_CSV_FILE_NAME, bestMap, experiment.getExplanations());
 
     }
 
@@ -105,8 +105,9 @@ public class Main {
 
     private static List<Professor> getProfessors(String fileName) {
         try {
+            // Create CSV builder, skip the first line (header)
             CSVReader reader = new CSVReaderBuilder(new FileReader(fileName)).withSkipLines(1).build();
-            List<Professor> profsList = new ArrayList<Professor>();
+            List<Professor> profsList = new ArrayList<>();
             List<String[]> infoList = reader.readAll();
             Iterator<String[]> iterator = infoList.iterator();
 
@@ -161,6 +162,10 @@ public class Main {
     }
 
     private static List<Discipline> getDisciplines(String fileName) {
+        // Note that formatting strongly matters when reading this CSV file
+        // Function currently reads from left to right, aka one row = discipline and list of departments
+        // Currently trying to read in file more naturally (aka columns instead of rows)
+
         try {
             CSVReader reader = new CSVReaderBuilder(new FileReader(fileName)).build();
             List<Discipline> disciplineList = new ArrayList<>();
@@ -181,5 +186,7 @@ public class Main {
         return null;
     }
 
+    // Edge cases that still need work be caught:
+    //
 
 }
