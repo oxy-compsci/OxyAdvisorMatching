@@ -1,5 +1,3 @@
-import java.util.Arrays;
-
 public class Discipline {
     String name;
     String[] list;
@@ -14,5 +12,4 @@ public class Discipline {
             list[i] = list[i].trim();
         return list;
     }
-
 }

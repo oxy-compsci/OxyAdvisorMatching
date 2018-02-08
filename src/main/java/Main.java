@@ -10,7 +10,7 @@ import java.util.*;
 public class Main {
     // CONSTANTS
     // needed for writing the output csv files
-    private static final String ANSWER_FILE_HEADER = "Student's Name,Majors,Professor's Name,Departments,Count,Reason of Matching";
+    private static final String ANSWER_FILE_HEADER = "Student's Name,Majors,Professor's Name,Departments,Previous Count, Current Count, Reason of Matching";
     private static final String EXPLANATION_FILE_HEADER = "Student's Majors,Professor's Department, Reason of Matching";
 
     // needed for formatting csv files
@@ -36,6 +36,7 @@ public class Main {
 
         // Create experiment and find best matches
         HillClimbing experiment = new HillClimbing();
+
         Map<Student, Professor> bestMap = experiment.findBestMatches(students, professors);
 
         // Write CSV file with matches
@@ -46,7 +47,8 @@ public class Main {
 
     }
 
-    private static void writeMatchFile(String filename, Map<Student, Professor> map, Map<Student, String> reasons, boolean includeExplanation) {
+    private static void writeMatchFile(String filename, Map<Student, Professor> map,
+                                       Map<Student, String> reasons, boolean includeExplanation) {
         List<Student> students = new ArrayList<>(map.keySet());
         Iterator<Student> iterator = students.iterator();
         try {
@@ -62,7 +64,8 @@ public class Main {
                 match = match + student.majors.toString().replaceAll(",", " AND ") + COMMA_DELIMITER;
                 match = match + professor.last + " " + professor.first + COMMA_DELIMITER;
                 match = match + professor.department + COMMA_DELIMITER;
-                match = match + professor.count + COMMA_DELIMITER;
+                match = match + professor.previousCount + COMMA_DELIMITER;
+                match = match + professor.getTotalCount(map) + COMMA_DELIMITER;
                 if(includeExplanation) {
                     String reason = reasons.get(student);
                     match = match + reason + COMMA_DELIMITER;
@@ -186,7 +189,5 @@ public class Main {
         return null;
     }
 
-    // Edge cases that still need work be caught:
-    //
 
 }

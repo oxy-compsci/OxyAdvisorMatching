@@ -1,17 +1,19 @@
-import java.util.Arrays;
+import java.util.*;
 
 public class Professor {
+    private static final int TOTAL_ADVISEE_LIMIT = 18;
+    private static final int NEW_ADVISEE_LIMIT = 10;
 
     String id, last, first, department;
-    int count;
+    int previousCount;
     int discipline_index;
 
-    public Professor(String id, String last, String first, String department, int count) {
+    public Professor(String id, String last, String first, String department, int previousCount) {
         this.id = id;
         this.last = last;
         this.first = first;
         this.department = department;
-        this.count = count;
+        this.previousCount = previousCount;
         this.discipline_index = getAcademicDiscipline();
     }
 
@@ -21,7 +23,24 @@ public class Professor {
             return false;
         return Arrays.asList(Main.disciplines.get(discipline_index).list).contains(studentInterest);
     }
-
+    public boolean exceedsTotalAdviseeLimit(Map<Student, Professor> matches) {
+        return (getTotalCount(matches) > TOTAL_ADVISEE_LIMIT);
+    }
+    public boolean exceedsNewAdviseeLimit(Map<Student, Professor> matches) {
+        return ((getTotalCount(matches) - previousCount) > NEW_ADVISEE_LIMIT);
+    }
+    public int getTotalCount(Map<Student, Professor> matches) {
+        // counts number of times that professor appears in matches map
+        ArrayList<Student> students = new ArrayList<>(matches.keySet());
+        int count = 0;
+        for(int i = 0; i < students.size(); i++) {
+            if(matches.get(students.get(i)) == this) {
+             count++;
+            }
+        }
+        // add the new number of advisees with the old
+        return count + previousCount;
+    }
     private int getAcademicDiscipline() {
         // Searches through the list of disciplines objects' lists
         // Finds what discipline their department falls under
@@ -33,7 +52,5 @@ public class Professor {
         }
         return num;
     }
-
-    // TODO: Need to create methods that put limitations of # of advisees.
 
 }
