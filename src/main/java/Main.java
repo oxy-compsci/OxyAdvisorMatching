@@ -129,7 +129,7 @@ public class Main {
                 last = info[1].trim();
                 first = info[2].trim();
                 department = info[4].trim();
-                count = Integer.valueOf(info[7].trim());
+                count = Integer.valueOf(info[5].trim());
 
                 Professor prof = new Professor(id, last, first, department, count);
                 profsList.add(prof);
