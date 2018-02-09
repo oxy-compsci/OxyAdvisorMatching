@@ -1,3 +1,13 @@
-Sciences,	Biology,Chemistry, Physics,	Computer Science,	Cognitive Science,	Geology, Mathematics
-Social Sciences,	Economics, Psychology,	Sociology,	Philosophy,	Politics, Diplomacy & World Affairs, Urban & Environmental Policy
-Arts and Humanities,	Art & Art History,	Media Arts & Culture,	Theater,	Music,	Spanish & French Studies, Chinese, Religious Studies
+﻿Sciences,Social Sciences,Arts and Humanities
+Biology,Economics,Art & Art History
+Chemistry,Psychology,Media Arts & Culture
+Physics,Sociology,Theater
+Comptuer Science,Philsophy,Music
+Cognitive Science,Politics,Spanish & French Studies
+Geology,Diplomacy & World Affairs,Chinese
+Mathematics,Urban & Environmental Policy,Religious Studies
+Kinesology,Critical Theory & Social Justice,Japanese
+Biochemistry,,Spanish
+,,French
+,,Religious Studies
+,,English
