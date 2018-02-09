@@ -3,8 +3,8 @@ import java.util.*;
 public class HillClimbing {
     // Constants
     // # of swaps should be roughly equal to # of incoming students (~500)
-    public static final int NUM_SWAPS = 50;
-    public static final int NUM_RESTARTS = 5;
+    public static final int NUM_SWAPS = 100;
+    public static final int NUM_RESTARTS = 2;
 
     // A map that connects individual student objects with an explanation of the best match
     Map<Student, String> explanations = new HashMap<>();
@@ -94,6 +94,14 @@ public class HillClimbing {
         Map<Student, Professor> studentProfMatches = new HashMap<>();
         int j = 0;
         for (int i = 0; i < students.size(); i++) {
+            // if the current indexed professor has too many advisees, go to the next one
+            // reset counter if needed
+            while(professors.get(j).exceedsTotalAdviseeLimit(studentProfMatches)) {
+                j++;
+                if (j == professors.size() - 1) {
+                    j = 0;
+                }
+            }
             studentProfMatches.put(students.get(i), professors.get(j));
             j++;
             if (j == professors.size() - 1) {
@@ -109,12 +117,12 @@ public class HillClimbing {
         ArrayList<Student> studentList = new ArrayList<>();
         studentList.addAll(map.keySet());
         for (int i = 0; i < studentList.size(); i++) {
-            score += scoreMatch(studentList.get(i), map.get(studentList.get(i)));
+            score += scoreMatch(studentList.get(i), map.get(studentList.get(i)), map);
         }
         return score;
     }
 
-    public double scoreMatch(Student student, Professor professor) {
+    public double scoreMatch(Student student, Professor professor, Map<Student, Professor> matches) {
         String reason;
         double score = 0;
         ArrayList<String> reasonsArr = new ArrayList<>();
@@ -126,31 +134,45 @@ public class HillClimbing {
             if (professor.department.equals(student.majors.get(i))) {
                 reason = "The student wants to major in the advisor's department ("+ student.majors.get(i) + ")";
                 reasonsArr.add(reason);
-                score = score + 1;
+                score = score + 2;
             } else if(professor.hasRelatedDepartment(student.majors.get(i))) {
                 // add .75 to score value if major is related
                 reason = "The student is interested in (" + student.majors.get(i) + "), which is in the same division as the advisor's department ("+ professor.department + ")";
                 reasonsArr.add(reason);
-                score = score + .75;
+                score = score + 1;
             }
         }
 
-        if(professor.count < 10) {
-            reason = "Professor currently only has (" + professor.count + ") advisees";
+        boolean exceedsTotalAdviseeLimit = professor.exceedsTotalAdviseeLimit(matches);
+        boolean exceedsNewAdviseeLimit = professor.exceedsNewAdviseeLimit(matches);
+        int adviseeCount = professor.getTotalCount(matches);
+
+
+        if(exceedsTotalAdviseeLimit) {
+            // penalize if limit of 17 advisees is met
+            score = score - .5;
+        } else {
+            // add .5 otherwise
+            reason = "Professor currently only has (" + adviseeCount + ") advisees";
             reasonsArr.add(reason);
             score = score + .5;
-        } // professor no more than 10 new ones, 17 max
+        }
+        if(exceedsNewAdviseeLimit) {
+            // penalize if professor has more than 10 new advisees
+            score = score - .25;
+        }
+
 
         if(reasonsArr.isEmpty()) {
             explanations.put(student, "Randomly matched");
         } else {
             explanations.put(student, reasonsArr.toString().replaceAll(",", "; "));
         }
-
         return score;
     }
 
     public Map<Student, String> getExplanations() {
         return explanations;
     }
+    // TODO: add multilines to explanations
 }

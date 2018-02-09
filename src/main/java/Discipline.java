@@ -1,18 +1,17 @@
+import java.util.ArrayList;
 import java.util.Arrays;
 
 public class Discipline {
     String name;
-    String[] list;
-    public Discipline(String disciplineName, String[] disciplineList) {
+    ArrayList<String> list;
+    public Discipline(String disciplineName, ArrayList<String> disciplineList) {
         this.name = disciplineName;
         this.list = clean(disciplineList);
     }
-    public String[] clean(String[] list) {
-        // Removes whitespace
-        // Important for checking relation (see method in Professor class)
-        for(int i = 0; i < list.length; i++)
-            list[i] = list[i].trim();
+    public ArrayList<String> clean(ArrayList<String> list) {
+        // Removes empty elements
+        list.removeAll(Arrays.asList(null,""));
         return list;
-    }
 
+    }
 }
