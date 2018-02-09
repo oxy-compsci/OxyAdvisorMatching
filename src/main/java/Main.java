@@ -10,8 +10,8 @@ import java.util.*;
 public class Main {
     // CONSTANTS
     // needed for writing the output csv files
-    private static final String ANSWER_FILE_HEADER = "Student's Name,Majors,Professor's Name,Departments,Previous Count, Current Count, Reason of Matching";
-    private static final String EXPLANATION_FILE_HEADER = "Student's Majors,Professor's Department, Reason of Matching";
+    private static final String ANSWER_FILE_HEADER = "Student's Name, Majors, Professor's Name, Departments, Previous Count, New Count, Total Count, Reason of Matching";
+    private static final String EXPLANATION_FILE_HEADER = "Student's Majors, Professor's Department, Reason of Matching";
 
     // needed for formatting csv files
     private static final String NEW_LINE_SEPARATOR = "\n";
@@ -62,13 +62,16 @@ public class Main {
                 Student student = iterator.next();
                 Professor professor = map.get(student);
                 String match = "";
+                int totalCount = professor.getTotalCount(map);
+                int newCount = totalCount - professor.previousCount;
 
                 match = match + student.last + " " + student.first + COMMA_DELIMITER;
                 match = match + student.majors.toString().replaceAll(",", " AND ") + COMMA_DELIMITER;
                 match = match + professor.last + " " + professor.first + COMMA_DELIMITER;
                 match = match + professor.department + COMMA_DELIMITER;
                 match = match + professor.previousCount + COMMA_DELIMITER;
-                match = match + professor.getTotalCount(map) + COMMA_DELIMITER;
+                match = match + newCount + COMMA_DELIMITER;
+                match = match + totalCount + COMMA_DELIMITER;
                 if (includeExplanation) {
                     String reason = reasons.get(student);
                     match = match + reason + COMMA_DELIMITER;
@@ -154,8 +157,8 @@ public class Main {
                 status = info[2].trim();
                 last = info[4].trim();
                 first = info[3].trim();
-                majors = Arrays.asList((info[7].replaceAll(", ", ",")).split(","));
-                minors = Arrays.asList((info[8].replaceAll(", ", ",")).split(","));
+                majors = Arrays.asList((info[6].replaceAll(", ", ",")).split(","));
+                minors = Arrays.asList((info[7].replaceAll(", ", ",")).split(","));
                 Student student = new Student(id, status, last, first, majors, minors);
                 studentList.add(student);
             }

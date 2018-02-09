@@ -3,8 +3,8 @@ import java.util.*;
 public class HillClimbing {
     // Constants
     // # of swaps should be roughly equal to # of incoming students (~500)
-    public static final int NUM_SWAPS = 50;
-    public static final int NUM_RESTARTS = 3;
+    public static final int NUM_SWAPS = 100;
+    public static final int NUM_RESTARTS = 2;
 
     // A map that connects individual student objects with an explanation of the best match
     Map<Student, String> explanations = new HashMap<>();
